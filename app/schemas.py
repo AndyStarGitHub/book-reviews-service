@@ -8,13 +8,13 @@ class BookCreate(BaseModel):
     year: int
     genres: List[str] = []
 
+
 class BookRead(BaseModel):
     id: str
     title: str
     author: str
     year: int
     genres: List[str]
-
 
 
 class BookList(BaseModel):
@@ -27,6 +27,7 @@ class BookList(BaseModel):
     avg_rating: Optional[float] = None
     reviews: Optional[list] = None
 
+
 class BooksPage(BaseModel):
     total: int
     page: int
@@ -37,7 +38,6 @@ class BooksPage(BaseModel):
 class ReviewAddFromBook(BaseModel):
     rating: int = Field(..., ge=1, le=5)
     text: str
-
 
 
 class ReviewCreate(BaseModel):
@@ -52,12 +52,12 @@ class ReviewRead(BaseModel):
     text: str
     id: str
 
+
 class ReviewsPage(BaseModel):
     total: int
     page: int
     size: int
     items: List[ReviewRead]
-
 
 
 class BookReadLong(BaseModel):
@@ -69,6 +69,7 @@ class BookReadLong(BaseModel):
     avg_rating: Optional[float] = None
     reviews: Optional[List[ReviewRead]] = None
 
+
 class BookSearchItem(BaseModel):
     id: str
     title: str
@@ -78,17 +79,20 @@ class BookSearchItem(BaseModel):
     created_at: str
     avg_rating: Optional[float] = None
 
+
 class SearchPage(BaseModel):
     total: int
     page: int
     size: int
     items: List[BookSearchItem]
 
+
 class TopRatedBook(BaseModel):
     book_id: str
     title: Optional[str] = None
     author: Optional[str] = None
     avg_rating: float
+
 
 class TopRatedResponse(BaseModel):
     top: List[TopRatedBook]

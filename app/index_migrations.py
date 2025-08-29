@@ -1,6 +1,5 @@
 import os
 
-from pprint import pprint
 from dotenv import load_dotenv
 
 from elasticsearch import Elasticsearch
@@ -39,15 +38,15 @@ SETTINGS = {
     }
 }
 
+
 def ensure_indices(es: Elasticsearch) -> None:
-    # books
     if not es.indices.exists(index=BOOKS_INDEX):
         es.indices.create(
             index=BOOKS_INDEX,
             settings=SETTINGS,
             mappings=BOOKS_MAPPINGS,
         )
-    # reviews
+
     if not es.indices.exists(index=REVIEWS_INDEX):
         es.indices.create(
             index=REVIEWS_INDEX,

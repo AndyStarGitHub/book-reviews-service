@@ -6,7 +6,15 @@ from fastapi.params import Query
 from loguru import logger
 
 from ..es_client import get_es
-from ..schemas import BookCreate, BookRead, BooksPage, ReviewAddFromBook, ReviewRead, ReviewsPage, BookReadLong
+from ..schemas import (
+    BookCreate,
+    BookRead,
+    BooksPage,
+    ReviewAddFromBook,
+    ReviewRead,
+    ReviewsPage,
+    BookReadLong,
+)
 from ..utils import gen_id, now_iso
 
 router = APIRouter(prefix="/books", tags=["books"])
@@ -27,6 +35,7 @@ def add_book(payload: BookCreate):
     es.index(index=BOOKS_INDEX, id=book_id, document=doc, refresh=True)
     return {"id": book_id}
 
+
 @router.get("/{book_id}", response_model=BookRead)
 def get_book(book_id: str):
     es = get_es()
@@ -36,16 +45,21 @@ def get_book(book_id: str):
     source = book["_source"]
     return BookRead(**source)
 
+
 @router.get("/", response_model=BooksPage)
 def list_books(
     page: int = Query(1, ge=1),
     size: int = Query(20, ge=1, le=100),
-    sort: str = Query("-created_at", description="Поле сортування: 'created_at' або '-created_at'")
+    sort: str = Query("-created_at"),
 ):
     es = get_es()
     from_ = (page - 1) * size
 
-    sort_clause = [{"created_at": {"order": "desc"}}] if sort.startswith("-") else [{"created_at": {"order": "asc"}}]
+    sort_clause = (
+        [{"created_at": {"order": "desc"}}]
+        if sort.startswith("-")
+        else [{"created_at": {"order": "asc"}}]
+    )
 
     res = es.search(
         index=BOOKS_INDEX,
@@ -59,6 +73,7 @@ def list_books(
     items = [BookRead(**h["_source"]) for h in hits.get("hits", [])]
 
     return BooksPage(total=total, page=page, size=size, items=items)
+
 
 @router.post("/{book_id}/reviews/", response_model=dict)
 def add_review(book_id: str, payload: ReviewAddFromBook):
@@ -82,6 +97,7 @@ def add_review(book_id: str, payload: ReviewAddFromBook):
     es.index(index=REVIEWS_INDEX, id=review_id, document=doc, refresh="wait_for")
     return {"id": review_id}
 
+
 @router.get("/{book_id}/reviews/{review_id}", response_model=ReviewRead)
 def get_review(book_id: str, review_id: str):
     es = get_es()
@@ -90,14 +106,15 @@ def get_review(book_id: str, review_id: str):
         raise HTTPException(status_code=404, detail="Review not found")
     src = review["_source"]
     if src["book_id"] != book_id:
-        raise HTTPException(status_code=400, detail="Review does not belong to this book")
+        raise HTTPException(
+            status_code=400, detail="Review does not belong to this book"
+        )
     return ReviewRead(**src)
+
 
 @router.get("/{book_id}/reviews/", response_model=ReviewsPage)
 def list_reviews(
-    book_id: str,
-    page: int = Query(1, ge=1),
-    size: int = Query(20, ge=1, le=100)
+    book_id: str, page: int = Query(1, ge=1), size: int = Query(20, ge=1, le=100)
 ):
     es = get_es()
     from_ = (page - 1) * size
@@ -113,6 +130,7 @@ def list_reviews(
     items = [ReviewRead(**h["_source"]) for h in hits.get("hits", [])]
 
     return ReviewsPage(total=total, page=page, size=size, items=items)
+
 
 @router.get("/plus-reviews/{book_id}", response_model=BookReadLong)
 def get_book_plus_reviews(book_id: str):
@@ -137,7 +155,7 @@ def get_book_plus_reviews(book_id: str):
 
     rev = es.search(
         index=REVIEWS_INDEX,
-        size=100,  # no pagination so far
+        size=100,
         query={"term": {"book_id": book_id}},
         sort=[{"created_at": {"order": "desc"}}],
     )

@@ -8,6 +8,7 @@ router = APIRouter(prefix="/analytics", tags=["analytics"])
 REVIEWS_INDEX = os.getenv("REVIEWS_INDEX", "reviews")
 BOOKS_INDEX = os.getenv("BOOKS_INDEX", "reviews")
 
+
 @router.get("/top-rated", response_model=TopRatedResponse)
 def top_rated_books():
     es = get_es()
@@ -22,9 +23,7 @@ def top_rated_books():
                     "size": 5,
                     "order": {"avg_rating": "desc"},
                 },
-                "aggs": {
-                    "avg_rating": {"avg": {"field": "rating"}}
-                },
+                "aggs": {"avg_rating": {"avg": {"field": "rating"}}},
             }
         },
     )
@@ -43,11 +42,13 @@ def top_rated_books():
         book_id = bucket["key"]
         avg = bucket["avg_rating"]["value"]
         src = meta.get(book_id)
-        top.append(TopRatedBook(
-            book_id=book_id,
-            avg_rating=avg if avg is not None else 0.0,
-            title=src["title"] if src else None,
-            author=src["author"] if src else None,
-        ))
+        top.append(
+            TopRatedBook(
+                book_id=book_id,
+                avg_rating=avg if avg is not None else 0.0,
+                title=src["title"] if src else None,
+                author=src["author"] if src else None,
+            )
+        )
 
     return TopRatedResponse(top=top)

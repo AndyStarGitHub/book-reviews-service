@@ -18,6 +18,7 @@ A service for managing books and reviews with **search** and **analytics** power
 * Get book by ID: `GET /books/{book_id}`
 * Add review to book: `POST /books/{book_id}/reviews/`
 * List reviews for a book: `GET /books/{book_id}/reviews/`
+* List reviews for a book and average rating: `GET /books/plus-reviews/{book_id}/`
 * Full-text search with filters: `GET /search/?q=...&genre=...&min_rating=...&year=...`
 * Analytics — top 5 books by average rating: `GET /analytics/top-rated`
 
@@ -147,6 +148,9 @@ Indices are created automatically at app startup (`ensure_indices()` in `index_m
 ```
 
 **GET /books/{book_id}/reviews/** — list reviews for the book (params: `page`, `size`)
+
+**GET /books/plus-reviews/{book_id}/** — list reviews plus average rating for the book 
+(params: `page`, `size`)
 
 ### Search
 

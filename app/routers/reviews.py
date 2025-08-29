@@ -34,6 +34,7 @@ def add_review(payload: ReviewCreate):
     es.index(index=REVIEWS_INDEX, id=review_id, document=doc, refresh=True)
     return {"id": review_id}
 
+
 @router.get("/{review_id}", response_model=ReviewRead)
 def get_review(review_id: str):
     logger.info(f"32 review_id: {review_id}")
@@ -45,16 +46,23 @@ def get_review(review_id: str):
     source = review["_source"]
     return ReviewRead(**source)
 
+
 @router.get("/", response_model=ReviewsPage)
 def list_reviews(
     page: int = Query(1, ge=1),
     size: int = Query(20, ge=1, le=100),
-    sort: str = Query("-created_at", description="Поле сортування: 'created_at' або '-created_at'")
+    sort: str = Query(
+        "-created_at", description="Поле сортування: 'created_at' або '-created_at'"
+    ),
 ):
     es = get_es()
     from_ = (page - 1) * size
 
-    sort_clause = [{"created_at": {"order": "desc"}}] if sort.startswith("-") else [{"created_at": {"order": "asc"}}]
+    sort_clause = (
+        [{"created_at": {"order": "desc"}}]
+        if sort.startswith("-")
+        else [{"created_at": {"order": "asc"}}]
+    )
 
     res = es.search(
         index=REVIEWS_INDEX,
