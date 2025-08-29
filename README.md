@@ -149,7 +149,7 @@ Indices are created automatically at app startup (`ensure_indices()` in `index_m
 
 **GET /books/{book_id}/reviews/** — list reviews for the book (params: `page`, `size`)
 
-**GET /books/plus-reviews/{book_id}/** — list reviews plus average rating for the book 
+**GET /books/plus-reviews/{book_id}/** — list reviews plus average rating for the book
 (params: `page`, `size`)
 
 ### Search
