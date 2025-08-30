@@ -6,7 +6,7 @@ from ..schemas import TopRatedBook, TopRatedResponse
 router = APIRouter(prefix="/analytics", tags=["analytics"])
 
 REVIEWS_INDEX = os.getenv("REVIEWS_INDEX", "reviews")
-BOOKS_INDEX = os.getenv("BOOKS_INDEX", "reviews")
+BOOKS_INDEX = os.getenv("BOOKS_INDEX", "books")
 
 
 @router.get("/top-rated", response_model=TopRatedResponse)

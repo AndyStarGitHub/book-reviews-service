@@ -20,7 +20,7 @@ from ..utils import gen_id, now_iso
 router = APIRouter(prefix="/books", tags=["books"])
 
 BOOKS_INDEX = os.getenv("BOOKS_INDEX", "books")
-REVIEWS_INDEX = os.getenv("REVIEWS_INDEX", "books")
+REVIEWS_INDEX = os.getenv("REVIEWS_INDEX", "reviews")
 
 
 @router.post("/", response_model=dict)

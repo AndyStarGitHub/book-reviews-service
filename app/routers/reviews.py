@@ -18,11 +18,8 @@ REVIEWS_INDEX = os.getenv("REVIEWS_INDEX", "reviews")
 def add_review(payload: ReviewCreate):
     es = get_es()
 
-    try:
-        book = es.get(index=BOOKS_INDEX, id=payload.book_id)
-        if not book.get("found"):
-            raise HTTPException(status_code=404, detail="Book not found")
-    except Exception:
+    book = es.get(index=BOOKS_INDEX, id=payload.book_id)
+    if not book.get("found"):
         raise HTTPException(status_code=404, detail="Book not found")
 
     review_id = gen_id()
